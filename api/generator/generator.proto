@@ -1,0 +1,35 @@
+syntax = "proto3";
+package generator;
+
+option go_package = "api/generator;generator";
+import "google/api/annotations.proto";
+
+service Generator {
+  rpc GetUrl (GetUrlRequest) returns (GetUrlResponse) {
+    option (google.api.http) = {
+      get: "/{short}"
+    };
+  }
+  rpc SetUrl(SetUrlRequest) returns (SetUrlResponse) {
+    option (google.api.http) = {
+      post: "/",
+      body: "*"
+    };
+  }
+}
+
+message SetUrlRequest {
+  string url = 1;
+}
+
+message SetUrlResponse {
+  string short = 1;
+}
+
+message GetUrlRequest {
+  string short = 1;
+}
+
+message GetUrlResponse {
+  string url = 1;
+}

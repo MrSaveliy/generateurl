@@ -1,0 +1,40 @@
+version: "3.9"
+
+networks:
+  app_network:
+    name: app.network
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: app.database
+    environment:
+      POSTGRES_DB: "localhost"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "secret"
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    volumes:
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app_network
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: app
+    command: ./main -memory=database
+    depends_on:
+      - postgres
+    networks:
+      - app_network
+    ports:
+      - "8080:8080"
+      - "8002:8002"
+    expose:
+      - "8080"
+      - "8002"
